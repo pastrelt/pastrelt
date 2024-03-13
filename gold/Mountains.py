@@ -1,5 +1,6 @@
 import psycopg2
-import json
+from psycopg2.extras import Json
+#import json
 
 # Establishing the connection
 # Устанавливаем соединение с базой данных PostgreSQL,
@@ -7,7 +8,7 @@ import json
 conn = psycopg2.connect(
     database="postgres",
     user='postgres',
-    password='',
+    password='6J46rc2(eg',
     host='127.0.0.1',
     port= '5432'
 )
@@ -30,7 +31,7 @@ if not exists:
 conn = psycopg2.connect(
     database="mountains",
     user='postgres',
-    password='',
+    password='6J46rc2(eg',
     host='127.0.0.1',
     port= '5432'
 )
@@ -83,7 +84,7 @@ class Database:
         self.conn = psycopg2.connect(
             database="mountains",
             user='postgres',
-            password='',
+            password='6J46rc2(eg',
             host='127.0.0.1',
             port='5432'
         )
@@ -95,9 +96,8 @@ class Database:
         # Статус модерации устанавливается в "new" при добавлении новой записи.
         query = '''
             INSERT INTO my_mountain (beauty_title, title, other_titles, connect, add_time,
-                                     user_email, user_fam, user_name, user_otc, user_phone,
-                                     latitude, longitude, height, level_winter, level_summer,
-                                     level_autumn, level_spring, images, status)
+                                     email, fam, name, otc, phone, latitude, longitude, height,
+                                     winter, summer, autumn, spring, images, status)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id;
         '''
@@ -108,8 +108,8 @@ class Database:
                                  pereval_data['coords']['longitude'], pereval_data['coords']['height'],
                                  pereval_data['level']['winter'], pereval_data['level']['summer'],
                                  pereval_data['level']['autumn'], pereval_data['level']['spring'],
-                                 psycopg2.extras.Json(pereval_data['images'], 'new' # начальный статус модерации
-                                 )))
+                                 Json(pereval_data['images']), 'new' # начальный статус модерации
+                                 ))
         inserted_id = self.cur.fetchone()[0]
         self.conn.commit()
         return inserted_id
@@ -124,7 +124,7 @@ class Database:
             return {"status": 400, "message": "Недопустимое значение для статуса", "id": None}
 
         sql = """
-        UPDATE pereval
+        UPDATE my_mountain
         SET status = %s
         WHERE id = %s;
         """
@@ -137,3 +137,41 @@ class Database:
         except psycopg2.Error as e:
             return {"status": 500, "message": str(e), "id": None}
 
+# Создаем экземпляр класса Database
+db = Database()
+
+# Пример данных для метода insert_pereval
+pereval_data = {
+    "beauty_title": "Some Title",
+    "title": "Title",
+    "other_titles": "Other Titles",
+    "connect": "Some Connection",
+    "add_time": "2022-01-01",
+    "user": {
+        "email": "user@example.com",
+        "fam": "User Fam",
+        "name": "User Name",
+        "otc": "User Otc",
+        "phone": "1234567890"
+    },
+    "coords": {
+        "latitude": "123.456",
+        "longitude": "456.789",
+        "height": "1000"
+    },
+    "level": {
+        "winter": "High",
+        "summer": "Low",
+        "autumn": "Medium",
+        "spring": "Low"
+    },
+    "images": ["image1.jpg", "image2.jpg"]
+}
+
+# Вызываем метод insert_pereval
+inserted_id = db.insert_pereval(pereval_data)
+print("Inserted ID:", inserted_id)
+
+# Вызываем метод update_status
+update_result = db.update_status(inserted_id, 'pending')
+print(update_result)
