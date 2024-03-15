@@ -1,18 +1,33 @@
+''' Первый спринт
+Создание базы данных.
+Создание класса по работе с данными, с помощью которого добавляяю новые значения в таблицу.
+Написание REST API, который вызывает метод из класса по работе с данными.
+'''
+
+
+import os
 import psycopg2
 from psycopg2.extras import Json
-#import json
+from flask import Flask, request, jsonify
+
+
+host = os.getenv('FSTR_DB_HOST')
+port = os.getenv('FSTR_DB_PORT')
+login = os.getenv('FSTR_DB_LOGIN')
+password = os.getenv('FSTR_DB_PASS')
 
 # Establishing the connection
 # Устанавливаем соединение с базой данных PostgreSQL,
 # используя указанные параметры, через модуль psycopg2.
 conn = psycopg2.connect(
     database="postgres",
-    user='postgres',
-    password='6J46rc2(eg',
-    host='127.0.0.1',
-    port= '5432'
+    user="postgres",
+    password="6J46rc2(eg",
+    host=host,
+    port=port
 )
 conn.autocommit = True
+
 # Creating a cursor object using the cursor() method
 # Создание объекта курсора с помощью метода cursor()
 cursor = conn.cursor()
@@ -30,10 +45,10 @@ if not exists:
 
 conn = psycopg2.connect(
     database="mountains",
-    user='postgres',
-    password='6J46rc2(eg',
-    host='127.0.0.1',
-    port= '5432'
+    user="postgres",
+    password="6J46rc2(eg",
+    host=host,
+    port=port
 )
 cursor = conn.cursor()
 
@@ -75,22 +90,22 @@ if not table_exists:
     # Фиксируем транзакцию, чтобы изменения были сохранены в базе данных.
     conn.commit()
 
-# Closing the connection
-conn.close()
+# # Closing the connection
+# conn.close()
 
 # Класс для работы с базой данных
 class Database:
     def __init__(self):
         self.conn = psycopg2.connect(
             database="mountains",
-            user='postgres',
-            password='6J46rc2(eg',
-            host='127.0.0.1',
-            port='5432'
+            user="postgres",
+            password="6J46rc2(eg",
+            host=host,
+            port=port
         )
         self.cur = self.conn.cursor()
 
-    def insert_pereval(self, pereval_data):
+    def insert_pereval(self, my_data):
         # Метод insert_pereval принимает словарь pereval_data с информацией о перевале
         # и вставляет его в базу данных.
         # Статус модерации устанавливается в "new" при добавлении новой записи.
@@ -101,14 +116,14 @@ class Database:
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id;
         '''
-        self.cur.execute(query, (pereval_data['beauty_title'], pereval_data['title'], pereval_data['other_titles'],
-                                 pereval_data['connect'], pereval_data['add_time'], pereval_data['user']['email'],
-                                 pereval_data['user']['fam'], pereval_data['user']['name'], pereval_data['user']['otc'],
-                                 pereval_data['user']['phone'], pereval_data['coords']['latitude'],
-                                 pereval_data['coords']['longitude'], pereval_data['coords']['height'],
-                                 pereval_data['level']['winter'], pereval_data['level']['summer'],
-                                 pereval_data['level']['autumn'], pereval_data['level']['spring'],
-                                 Json(pereval_data['images']), 'new' # начальный статус модерации
+        self.cur.execute(query, (my_data['beauty_title'], my_data['title'], my_data['other_titles'],
+                                 my_data['connect'], my_data['add_time'], my_data['user']['email'],
+                                 my_data['user']['fam'], my_data['user']['name'], my_data['user']['otc'],
+                                 my_data['user']['phone'], my_data['coords']['latitude'],
+                                 my_data['coords']['longitude'], my_data['coords']['height'],
+                                 my_data['level']['winter'], my_data['level']['summer'],
+                                 my_data['level']['autumn'], my_data['level']['spring'],
+                                 Json(my_data['images']), 'new' # начальный статус модерации
                                  ))
         inserted_id = self.cur.fetchone()[0]
         self.conn.commit()
@@ -137,11 +152,12 @@ class Database:
         except psycopg2.Error as e:
             return {"status": 500, "message": str(e), "id": None}
 
+# Оставил данный код, он подтверждает работоспособность класса.
 # Создаем экземпляр класса Database
 db = Database()
 
-# Пример данных для метода insert_pereval
-pereval_data = {
+# Пример - проверка для метода insert_pereval
+my_data = {
     "beauty_title": "Some Title",
     "title": "Title",
     "other_titles": "Other Titles",
@@ -169,9 +185,31 @@ pereval_data = {
 }
 
 # Вызываем метод insert_pereval
-inserted_id = db.insert_pereval(pereval_data)
+inserted_id = db.insert_pereval(my_data)
 print("Inserted ID:", inserted_id)
 
-# Вызываем метод update_status
+# Вызываем метод update_status для проверки работоспособности
 update_result = db.update_status(inserted_id, 'pending')
 print(update_result)
+
+
+
+# Инициализация Flask приложения
+Mountains = Flask(__name__)
+
+# Метод POST submitData для REST API
+@Mountains.route('/submitData', methods=['POST'])
+def submitData():
+    data = request.get_json()
+    if not data:
+        return jsonify({"status": 400, "message": "Bad Request", "id": None})
+
+    try:
+        inserted_id = db.insert_pereval(data)
+        return jsonify({"status": 200, "message": "Отправлено успешно", "id": inserted_id})
+
+    except Exception as e:
+        return jsonify({"status": 500, "message": str(e), "id": None})
+
+if __name__ == '__main__':
+    Mountains.run(debug=True)
