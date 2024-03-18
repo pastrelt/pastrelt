@@ -1,14 +1,11 @@
 ''' Первый спринт
 Создание базы данных.
 Создание класса по работе с данными, с помощью которого добавляяю новые значения в таблицу.
-Написание REST API, который вызывает метод из класса по работе с данными.
+Написание REST API в отдельном файле start.py, который вызывает метод из класса по работе с данными.
 '''
-
-
 import os
 import psycopg2
 from psycopg2.extras import Json
-from flask import Flask, request, jsonify
 
 
 host = os.getenv('FSTR_DB_HOST')
@@ -105,7 +102,7 @@ class Database:
         )
         self.cur = self.conn.cursor()
 
-    def insert_pereval(self, my_data):
+    def insert_mountains(self, my_data):
         # Метод insert_pereval принимает словарь pereval_data с информацией о перевале
         # и вставляет его в базу данных.
         # Статус модерации устанавливается в "new" при добавлении новой записи.
@@ -185,7 +182,7 @@ my_data = {
 }
 
 # Вызываем метод insert_pereval
-inserted_id = db.insert_pereval(my_data)
+inserted_id = db.insert_mountains(my_data)
 print("Inserted ID:", inserted_id)
 
 # Вызываем метод update_status для проверки работоспособности
@@ -194,22 +191,22 @@ print(update_result)
 
 
 
-# Инициализация Flask приложения
-Mountains = Flask(__name__)
-
-# Метод POST submitData для REST API
-@Mountains.route('/submitData', methods=['POST'])
-def submitData():
-    data = request.get_json()
-    if not data:
-        return jsonify({"status": 400, "message": "Bad Request", "id": None})
-
-    try:
-        inserted_id = db.insert_pereval(data)
-        return jsonify({"status": 200, "message": "Отправлено успешно", "id": inserted_id})
-
-    except Exception as e:
-        return jsonify({"status": 500, "message": str(e), "id": None})
-
-if __name__ == '__main__':
-    Mountains.run(debug=True)
+# # Инициализация Flask приложения
+# Mountains = Flask(__name__)
+#
+# # Метод POST submitData для REST API
+# @Mountains.route('/submitData', methods=['POST'])
+# def submitData():
+#     data = request.get_json()
+#     if not data:
+#         return jsonify({"status": 400, "message": "Bad Request", "id": None})
+#
+#     try:
+#         inserted_id = db.insert_mountains(data)
+#         return jsonify({"status": 200, "message": "Отправлено успешно", "id": inserted_id})
+#
+#     except Exception as e:
+#         return jsonify({"status": 500, "message": str(e), "id": None})
+#
+# if __name__ == '__main__':
+#     Mountains.run(debug=True)
