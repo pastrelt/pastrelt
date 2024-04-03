@@ -13,7 +13,7 @@ class BaseRegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username",
+        fields = ( "username",
                   "first_name",
                   "last_name",
                   "email",
@@ -27,7 +27,8 @@ class BaseRegisterForm(UserCreationForm):
 # чтобы необходимые проверки и сохранение в модель User были выполнены.
 # Далее мы получаем объект модели группы basic. И в следующей строке, через атрибут user_set,
 # возвращающий список всех пользователей этой группы, мы добавляем нового пользователя в эту группу.
-# Обязательным требованием метода save() является возвращение объекта модели User по итогу выполнения функции.
+# Обязательным требованием метода save() является возвращение объекта модели
+# User по итогу выполнения функции.
 class BasicSignupForm(SignupForm):
 
     def save(self, request):

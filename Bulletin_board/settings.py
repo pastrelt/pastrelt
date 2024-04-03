@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Доступ.
+    # Регистрация и аутентификация.
     'sign',
     'protect',
 
@@ -48,8 +48,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # Отменил авторизацию через сервис-провайдера.
-    #'allauth.socialaccount.providers.google',
+
+    # Рабочий проект.
+    'bulletin'
 ]
 
 SITE_ID = 1
