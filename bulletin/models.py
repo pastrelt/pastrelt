@@ -24,13 +24,13 @@ class Categories_subscribers(models.Model):
     category = models.ForeignKey('Category', on_delete = models.CASCADE)
 
 
-# # 2. Модель News
-# # Модель для хранения новостей модератора, которые рассылаются подписчикам.
-# class News(models.Model):
-#     category_news = models.ManyToManyField('Category', through = 'PostCategory')
-#     title_news =  models.CharField(max_length = 255)
-#     text_news = models.TextField()
-#     date_and_time_news = models.DateTimeField(auto_now_add = True)
+# 2. Модель News
+# Модель для хранения новостей модератора, которые рассылаются подписчикам.
+class News(models.Model):
+    category_news = models.ForeignKey('Category', on_delete = models.CASCADE)
+    title_news =  models.CharField(max_length = 255)
+    text_news = models.TextField()
+    date_and_time_news = models.DateTimeField(auto_now_add = True)
 
 
 # 3. Модель Bulletin(Post)
