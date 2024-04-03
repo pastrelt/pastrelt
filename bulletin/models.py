@@ -64,29 +64,26 @@ class Bulletin(models.Model):
 class BulletinCategory(models.Model):
     post = models.ForeignKey('Bulletin', on_delete = models.CASCADE)
     category = models.ForeignKey('Category', on_delete = models.CASCADE)
-#
-#
-# # 1. Модель Comment
-# # Каждое объявление получает отклик.
-# # Модель будет иметь следующие поля:
-# # связь «один ко многим» с моделью Bulletin(Post);
-# # связь «один ко многим» со встроенной моделью User
-# # (комментарии может оставить любой пользователь, необязательно автор);
-# # текст комментария;
-# # дата и время создания комментария;
-# # рейтинг комментария.
-# class Comment(models.Model):
-#     bulletin = models.ForeignKey('Bulletin', on_delete = models.CASCADE)
-#     author = models.ForeignKey(User, on_delete = models.CASCADE)
-#     text_comment = models.TextField()
-#     date_and_time = models.DateTimeField(auto_now_add=True)
-#     rating = models.IntegerField(default=0)
-#
-#     # Методы like() и dislike() увеличивают/уменьшают рейтинг на единицу.
-#     def like(self):
-#         self.rating += 1
-#         self.save()
-#
-#     def dislike(self):
-#         self.rating -= 1
-#         self.save()
+
+
+# 4. Модель Comment
+# Каждое объявление может получить отклик.
+# Модель будет иметь следующие поля:
+# связь с объявлением «один ко многим» с моделью Bulletin(Post);
+# автор объявления - связь «один ко многим» со встроенной моделью User,
+# комментарии может оставить любой пользователь;
+# текст комментария;
+# дата и время создания комментария;
+# флаг принятия;
+# автор коментария - связь «один ко многим» со встроенной моделью User,
+class Comment(models.Model):
+    bulletin = models.ForeignKey('Bulletin', on_delete = models.CASCADE)
+    author_bulletin = models.ForeignKey(User,
+                                        related_name='bulletin_comments',
+                                        on_delete = models.CASCADE)
+    text_comment = models.TextField()
+    date_and_time_сomment = models.DateTimeField(auto_now_add=True)
+    acceptance_flag = models.BooleanField(default = False)
+    author_comment = models.ForeignKey(User,
+                                       related_name='regular_comments',
+                                       on_delete=models.CASCADE)
