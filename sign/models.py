@@ -6,6 +6,7 @@ from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
 
+#
 from django.db import models
 
 # БД для хранения данных при реистрации (почта и код).
@@ -14,20 +15,20 @@ class Registration(models.Model):
     confirmation_code = models.CharField(max_length=6)
 
 
-class BaseRegisterForm(UserCreationForm):
-    email = forms.EmailField(label = "Email")
-    # first_name = forms.CharField(label = "Имя")
-    # last_name = forms.CharField(label = "Фамилия")
-
-    class Meta:
-        model = User
-        fields = ( #"username",
-                  #"first_name",
-                  #"last_name",
-                  "email",
-                  "password1",
-                  #"password2",
-                  )
+# class BaseRegisterForm(UserCreationForm):
+#     email = forms.EmailField(label = "Email")
+#     # first_name = forms.CharField(label = "Имя")
+#     # last_name = forms.CharField(label = "Фамилия")
+#
+#     class Meta:
+#         model = User
+#         fields = ( #"username",
+#                   #"first_name",
+#                   #"last_name",
+#                   "email",
+#                   "password1",
+#                   #"password2",
+#                   )
 
 
 # Ппереопределить класс формы так,

@@ -27,5 +27,5 @@ urlpatterns = [
     path('sign/', include('sign.urls')),
 
     # Добавил перенаправление на ‘accounts/’ для всех URL, которые будут управляться подключенным пакетом.
-    path('accounts/', include('allauth.urls')),
+    #path('accounts/', include('allauth.urls')),
 ]
