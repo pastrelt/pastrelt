@@ -1,12 +1,3 @@
-#from django.contrib.auth.models import User
-#from django.views.generic.edit import CreateView
-#from .models import BaseRegisterForm
-
-# class BaseRegisterView(CreateView):
-#     model = User
-#     form_class = BaseRegisterForm
-#     success_url = '/'
-
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -15,28 +6,13 @@ import random
 import string
 
 
-# Функция генерации случайного кода.
+# Функция генерации случайного кода регистрации.
 def generate_confirmation_code():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
-def confirm_registration(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        confirmation_code = request.POST.get('confirmation_code')
-
-        try:
-            registration = Registration.objects.get(email=email, confirmation_code=confirmation_code)
-            user = User.objects.create_user(email=email)
-            user.save()
-            registration.delete()
-            return render(request, 'registration_success.html')
-        except Registration.DoesNotExist:
-            return render(request, 'register.html')
-
-#
+# Функция получения email пользователя и отпарвки ему случайного кода регистрации.
 def register(request):
     if request.method == 'POST':
-        print(1)
         email = request.POST.get('email')
         confirmation_code = generate_confirmation_code()
 
@@ -49,25 +25,28 @@ def register(request):
             [email],
             fail_silently=False,
         )
+        # Не верно, надо послать на ппроверку кода
+        return render(request, 'sign/confirm_registration.html', {'email': email})
 
-        return render(request, 'registration_success.html')
+    return render(request, 'sign/register.html')
 
-    return render(request, 'register.html')
+# Проверка почты по едентификации кода подтверждения и обновление email пользователя в
+# постоянную базу User. Очистка записи в таблице временного хранения данных.
+def confirm_registration(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        confirmation_code = request.POST.get('confirmation_code')
 
-# def confirm_registration(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         confirmation_code = request.POST.get('confirmation_code')
-#
-#         try:
-#             registration = Registration.objects.get(email=email, confirmation_code=confirmation_code)
-#             user = User.objects.create_user(email=email)
-#             user.save()
-#             registration.delete()
-#             return render(request, 'registration_success.html')
-#         except Registration.DoesNotExist:
-#             return render(request, 'register.html')
-#
-#     return redirect('register')
+        registration = Registration.objects.filter(email=email,
+                                                   confirmation_code=confirmation_code).first()
+
+        if registration:
+            user = User.objects.create_user(username=email, email=email)
+            Registration.delete()
+            return render(request, 'sign/registration_success.html')
+        else:
+            return render(request, 'sign/registration_failure.html')
+
+    return redirect('register')
 
 

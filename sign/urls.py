@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import register, confirm_registration
+from . import views
 #from .views import BaseRegisterView
 
 urlpatterns = [
@@ -10,8 +10,12 @@ urlpatterns = [
     path('logout/',
          LogoutView.as_view(template_name = 'sign/logout.html'),
          name='logout'),
-    path('signup/', register, name='register'),
+
+    #path('signup/', register, name='register'),
          # BaseRegisterView.as_view(template_name = 'sign/signup.html'),
          # name='signup'),
-    path('confirm_registration/', confirm_registration, name='confirm_registration'),
+
+    # Добавить новый маршрут для подтверждения регистрации и обработки кода подтверждения.
+    path('register/', views.register, name='register'),
+    path('confirm_registration/', views.confirm_registration, name='confirm_registration'),
 ]

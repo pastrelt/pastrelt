@@ -6,11 +6,11 @@
 </head>
 <body>
     <h1>Registration Form</h1>
-    <form method="post">
+    <form method="post" action="{% url 'register' %}">
         {% csrf_token %}
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
-        <button type="submit">Register</button>
+        <button type="submit">Отправить код подтверждения</button>
     </form>
 </body>
 </html>

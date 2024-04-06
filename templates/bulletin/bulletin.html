@@ -1,0 +1,68 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Bulletin
+{% endblock title %}
+
+{% block content %}
+    <h1>Список объявлений ...</h1>
+
+    {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+        <form action="" method="get">
+            {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+            {{ filterset.form.as_p }}
+            {# Добавим кнопку отправки данных формы #}
+            <input type="submit" value="Найти" />
+        </form>
+
+    <hr>
+    {% if list_bulletin %}
+        <table>
+            <tr>
+                <td>Название объявления</td>
+                <td>Текст</td>
+                <td>Дата и время написания</td>
+                <td>Автор</td>
+                <td>Категория</td>
+            </tr>
+
+            {% for bullet in list_bulletin %}
+            <tr>
+                <td>{{ bullet.title_bulletin }}</td>
+                <td>{{ bullet.content|truncatechars:20 }}</td>
+                <td>{{ bullet.date_and_time_bulletin}}</td>
+                <td>{{ bullet.author_bulletin.username }}</td>
+                <td>{{ bullet.category_bulletin.name_of_category }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>Объявлений нет!</h2>
+    {% endif %}
+
+    {# Добавляем пагинацию на страницу #}
+
+    {# Информация о предыдущих страницах #}
+    {% if page_obj.has_previous %}
+        <!--  Модифицируем код ссылки на пагинацию добавляя "{{ request.GET.urlencode }}&"  -->
+        <!--  для сохранения фильтра при переходе на другую страницу -->
+        <a href="?{{ request.GET.urlencode }}&page=1" title='Первая страница'>1 </a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+        <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.paginator.num_pages }}" title='Последняя страница'>{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+{% endblock content %}

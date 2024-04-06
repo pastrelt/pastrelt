@@ -26,6 +26,7 @@ urlpatterns = [
     # Все страницы, URL которых начинается с sign/, перенаправляю в приложение sign.
     path('sign/', include('sign.urls')),
 
-    # Добавил перенаправление на ‘accounts/’ для всех URL, которые будут управляться подключенным пакетом.
-    #path('accounts/', include('allauth.urls')),
+    # Все страницы, URL которых начинается с bulletin/, перенаправляю в приложение articles/urls_articles.py .
+    # исправление ошибки предыдущео задания.
+    path('bulletin/', include('bulletin.urls')),
 ]
