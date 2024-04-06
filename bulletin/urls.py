@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданное нами представление
-from .views import BulletinList
+from .views import BulletinList, BulletinCreate
 
 
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     # а Django ожидает функцию, нам надо представить этот класс в виде view.
     # Для этого вызываем метод as_view.
     path('', BulletinList.as_view(), name='bulletin_list'),
+    path('create/', BulletinCreate.as_view(), name='bulletin_create'),
 ]

@@ -137,7 +137,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # а также страница, на которую перенаправляется пользователь после успешного входа на сайт,
 # в данном случае корневая страница сайта.
 #LOGIN_URL = 'accounts/login/'
-LOGIN_URL = 'sign/login/'
+#LOGIN_URL = 'sign/login/'
+LOGIN_URL = 'sign/register/'
 LOGIN_REDIRECT_URL = '/'
 
 

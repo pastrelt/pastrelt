@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h2>Страница авторизованного пользователя {{request.POST.email}}</h2>
+<h3>Выбери направление</h3>
+
+<button> <a href="http://127.0.0.1:8000/bulletin/">Просмотр списка объявлений</a> </button>
+<button> <a href="http://127.0.0.1:8000/bulletin/create/">Написать объявление</a> </button>
+
+{% endblock %}

@@ -1,14 +1,14 @@
 from django.views.generic import ListView, CreateView
 from .models import Bulletin
-from .forms import PostForm, BulletinForm
+from .forms import BulletinForm
 
-# Добавляем новое представление для создания Статей.
+# Добавляем новое представление для ввода объявлений.
 class BulletinCreate(CreateView):
     # Проверка доступа на добавление.
-    permission_required = ('articles.add_post',)
-    form_class = BulletinForm # ArticleForm
-    model = Post
-    template_name = 'bulletin_edit.html'
+    permission_required = ('bulletin.add_bulletin',)
+    form_class = BulletinForm
+    model = Bulletin
+    template_name = 'bulletin/bulletin_edit.html'
 
 
 class BulletinList(ListView):

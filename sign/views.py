@@ -37,13 +37,13 @@ def confirm_registration(request):
         email = request.POST.get('email')
         confirmation_code = request.POST.get('confirmation_code')
 
-        registration = Registration.objects.filter(email=email,
+        register_now = Registration.objects.filter(email=email,
                                                    confirmation_code=confirmation_code).first()
 
-        if registration:
+        if register_now:
             user = User.objects.create_user(username=email, email=email)
-            Registration.delete()
-            return render(request, 'sign/registration_success.html')
+            register_now.delete()
+            return render(request, 'bulletin/bulletin_choice.html')
         else:
             return render(request, 'sign/registration_failure.html')
 
