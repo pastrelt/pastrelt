@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm Registration</title>
+    <title>Подтверждение регистрации</title>
 </head>
 <body>
-    <h1>Confirm Registration</h1>
+    <h1>Реистрация по коду</h1>
     <form method="post" action="{% url 'confirm_registration' %}">
         {% csrf_token %}
         <input type="hidden" name="email" value="{{ email }}">
-        <label for="confirmation_code">Confirmation Code:</label>
+        <label for="confirmation_code">Ведите код реистрации отправленый Вам по почте:</label>
         <input type="text" name="confirmation_code" id="confirmation_code" required>
-        <button type="submit">Register</button>
+        <button type="submit">Подтвердите код</button>
     </form>
 </body>
 </html>

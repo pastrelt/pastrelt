@@ -26,7 +26,7 @@ urlpatterns = [
     # Все страницы, URL которых начинается с sign/, перенаправляю в приложение sign.
     path('sign/', include('sign.urls')),
 
-    # Все страницы, URL которых начинается с bulletin/, перенаправляю в приложение articles/urls_articles.py .
-    # исправление ошибки предыдущео задания.
+    # Все страницы, URL которых начинается с bulletin/,
+    # перенаправляю в приложение bulletin.urls.
     path('bulletin/', include('bulletin.urls')),
 ]

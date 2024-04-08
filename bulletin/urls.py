@@ -1,13 +1,16 @@
 from django.urls import path
 # Импортируем созданное нами представление
-from .views import BulletinList, BulletinCreate
+from .views import BulletinList, create_bulletin
 
 
 urlpatterns = [
     # В данном случае путь к постам у нас останется пустым.
-    # Т.к. наше объявленное представление является классом,
-    # а Django ожидает функцию, нам надо представить этот класс в виде view.
-    # Для этого вызываем метод as_view.
     path('', BulletinList.as_view(), name='bulletin_list'),
-    path('create/', BulletinCreate.as_view(), name='bulletin_create'),
+
+    path('create/', create_bulletin, name='bulletin_create'),
+
+    #path('bulletin/', BulletinList.as_view(), name='bulletin_list'),
+    #
+    # path('create/', create_bulletin, name='bulletin_create'),
+
 ]

@@ -1,17 +1,27 @@
 from django.views.generic import ListView, CreateView
 from .models import Bulletin
 from .forms import BulletinForm
+from django.shortcuts import render, redirect, reverse
 
-# Добавляем новое представление для ввода объявлений.
-class BulletinCreate(CreateView):
-    # Проверка доступа на добавление.
-    permission_required = ('bulletin.add_bulletin',)
-    form_class = BulletinForm
-    model = Bulletin
-    template_name = 'bulletin/bulletin_edit.html'
+
+def create_bulletin(request):
+    # Заполняем форму ввода объявлений, записываем и
+    # переходим на общий список объявлений.
+    if request.method == 'POST':
+        form = BulletinForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('http://127.0.0.1:8000/bulletin/')  # Перенаправляем на список объявлений
+    else:
+        # Получаем значение email из параметров URL для
+        # получения id пользователя из User.
+        email = request.GET.get('email')
+        form = BulletinForm(email=email)
+    return render(request, 'bulletin/bulletin_edit.html', {'form': form})
 
 
 class BulletinList(ListView):
+    # Выводит список всех объявлений.
     # Указываем модель, объекты которой мы будем выводить
     model = Bulletin
     # Поле, которое будет использоваться для сортировки объектов
@@ -24,22 +34,3 @@ class BulletinList(ListView):
     # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'list_bulletin'
     paginate_by = 10  # количество записей на странице
-
-    # # Переопределяем функцию получения списка статей.
-    # def get_queryset(self):
-    #     # Получаем обычный запрос
-    #     queryset = super().get_queryset()
-    #     # Используем наш класс фильтрации.
-    #     # self.request.GET содержит объект QueryDict, который мы рассматривали
-    #     # в этом юните ранее.
-    #     # Сохраняем нашу фильтрацию в объекте класса,
-    #     # чтобы потом добавить в контекст и использовать в шаблоне.
-    #     self.filterset = PostFilter(self.request.GET, queryset)
-    #     # Возвращаем из функции отфильтрованный список статей
-    #     return self.filterset.qs
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # Добавляем в контекст объект фильтрации.
-    #     context['filterset'] = self.filterset
-    #     return context

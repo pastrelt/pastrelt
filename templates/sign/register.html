@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registration Form</title>
+    <title>Реистрация</title>
 </head>
 <body>
-    <h1>Registration Form</h1>
+    <h1>Регистрируемся!</h1>
     <form method="post" action="{% url 'register' %}">
         {% csrf_token %}
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
-        <button type="submit">Отправить код подтверждения</button>
+        <button type="submit">Отправить код подтверждения на указанную почту</button>
     </form>
 </body>
 </html>

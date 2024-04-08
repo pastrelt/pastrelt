@@ -1,10 +1,10 @@
-{% extends "main.html" %}
+{% extends 'flatpages/default.html' %}
 
 {% block content %}
-<h2>Страница авторизованного пользователя {{request.POST.email}}</h2>
-<h3>Выбери направление</h3>
+<h2>Страница авторизованного пользователя </h2>
+<h3>Выбери направление {{request.POST.email}}</h3>
 
 <button> <a href="http://127.0.0.1:8000/bulletin/">Просмотр списка объявлений</a> </button>
-<button> <a href="http://127.0.0.1:8000/bulletin/create/">Написать объявление</a> </button>
+<button> <a href="http://127.0.0.1:8000/bulletin/create/?email={{ request.POST.email }}">Написать объявление</a> </button>
 
 {% endblock %}

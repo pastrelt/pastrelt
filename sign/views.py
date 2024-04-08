@@ -13,11 +13,18 @@ def generate_confirmation_code():
 # Функция получения email пользователя и отпарвки ему случайного кода регистрации.
 def register(request):
     if request.method == 'POST':
+        print(1)
         email = request.POST.get('email')
         confirmation_code = generate_confirmation_code()
 
-        Registration.objects.create(email=email, confirmation_code=confirmation_code)
+        # Проверяем, есть ли записи в таблице Registration для ее очистки.
+        if Registration.objects.exists():
+        # presence_of_lines = Registration.objects.all() # Другой вариант проверки.
+        # if presence_of_lines:
+            Registration.objects.all().delete()
 
+        Registration.objects.create(email=email, confirmation_code=confirmation_code)
+        print(3)
         send_mail(
             'Код подтверждения',
             f'Ваш код подтверждения: {confirmation_code}',
@@ -25,15 +32,18 @@ def register(request):
             [email],
             fail_silently=False,
         )
-        # Не верно, надо послать на ппроверку кода
-        return render(request, 'sign/confirm_registration.html', {'email': email})
-
+        # Ввод и подтверждение кода реистрации.
+        return render(request, 'sign/confirm_registration.html',
+                      {'email': email})
+    print(4)
+    # Ввод и подтверждение введенной почты.
     return render(request, 'sign/register.html')
 
 # Проверка почты по едентификации кода подтверждения и обновление email пользователя в
 # постоянную базу User. Очистка записи в таблице временного хранения данных.
 def confirm_registration(request):
     if request.method == 'POST':
+        print(2)
         email = request.POST.get('email')
         confirmation_code = request.POST.get('confirmation_code')
 
@@ -41,12 +51,26 @@ def confirm_registration(request):
                                                    confirmation_code=confirmation_code).first()
 
         if register_now:
-            user = User.objects.create_user(username=email, email=email)
-            register_now.delete()
+            # Проверяем наличие записи с указанным email в таблице User,
+            # защищаясь от повторнорегистрации, значение User.email должно оставаться уникальным
+            if not User.objects.filter(email=email).exists():
+                #return render(request, 'bulletin/bulletin_choice.html')
+
+                user = User.objects.create_user(username=email, email=email)
+                register_now.delete()
+                print(5)
+            # Страница авторизованного пользователя,
+            # выбор кнопоки продолжения работы.
+            print(8)
             return render(request, 'bulletin/bulletin_choice.html')
         else:
-            return render(request, 'sign/registration_failure.html')
+            print(6)
+            # Предоставляем сайт уже зарегистрированным.
+            #return render(request, 'sign/registration_failure.html')
+            return render(request, 'protect/index.html')
 
+
+        print(7)
     return redirect('register')
 
 
