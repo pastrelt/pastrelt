@@ -29,4 +29,5 @@ urlpatterns = [
     # Все страницы, URL которых начинается с bulletin/,
     # перенаправляю в приложение bulletin.urls.
     path('bulletin/', include('bulletin.urls')),
+
 ]

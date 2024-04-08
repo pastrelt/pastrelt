@@ -1,7 +1,24 @@
 from django.views.generic import ListView, CreateView
 from .models import Bulletin
-from .forms import BulletinForm
+from .forms import BulletinForm, CommentForm
 from django.shortcuts import render, redirect, reverse
+
+
+def create_comment(request):
+    # Пишем отклики, записываем и переходим на общий список объявлений.
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Перенаправляем на список объявлений
+            return redirect('http://127.0.0.1:8000/bulletin/')
+    else:
+        # Получаем значение email из параметров URL для
+        # получения id пользователя из User.
+        email = request.GET.get('email')
+        form = CommentForm(email=email)
+    # Перенаправляем на форму ввода сомментарий.
+    return render(request, 'сomment/create_comment.html', {'form': form})
 
 
 def create_bulletin(request):

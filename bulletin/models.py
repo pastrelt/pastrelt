@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+
+# Используем RichTextField из django-ckeditor
 from ckeditor.fields import RichTextField
 
 
@@ -24,7 +26,7 @@ class News(models.Model):
     date_and_time_news = models.DateTimeField(auto_now_add = True)
 
 
-# 3. Модель Bulletin(Post)
+# 3. Модель Bulletin
 # Эта модель должна содержать объявления, которые создают пользователи.
 # Соответственно, модель должна включать следующие поля:
 # автоматически добавляемая дата и время создания;
@@ -41,29 +43,16 @@ class Bulletin(models.Model):
 
     # Форматирование вывода данных для вывода на основную страницу.
     def __str__(self):
-        return (f'{self.title_bulletin.title()}   '
-                f'{self.date_and_time_bulletin.strftime('%d-%m-%Y %H:%M:%S')}   '
-                f'{self.content[:20]}')
+        return (f'{self.title_bulletin}')
+                # f'{self.date_and_time_bulletin.strftime('%d-%m-%Y %H:%M:%S')}   '
+                # f'{self.content[:20]}')
 
-    # def get_absolute_url(self):
-    #     return reverse('article_detail', args=[str(self.id)])
-
-
-# 3.1 Модель BulletinCategory
-# Промежуточная модель для связи «многие ко многим»:
-# связь «один ко многим» с моделью Bulletin;
-# связь «один ко многим» с моделью Category.
-# class BulletinCategory(models.Model):
-#     bulletin = models.ForeignKey('Bulletin', on_delete = models.CASCADE)
-#     category = models.ForeignKey('Category', on_delete = models.CASCADE)
 
 
 # 4. Модель Comment
 # Каждое объявление может получить отклик.
 # Модель будет иметь следующие поля:
-# связь с объявлением «один ко многим» с моделью Bulletin(Post);
-# автор объявления - связь «один ко многим» со встроенной моделью User,
-# комментарии может оставить любой пользователь;
+# связь с объявлением «один ко многим» с моделью Bulletin;
 # текст комментария;
 # дата и время создания комментария;
 # флаг принятия;
@@ -73,6 +62,4 @@ class Comment(models.Model):
     text_comment = models.TextField()
     date_and_time_сomment = models.DateTimeField(auto_now_add=True)
     acceptance_flag = models.BooleanField(default = False)
-    author_comment = models.ForeignKey(User,
-                                       related_name='bulletin_comments',
-                                       on_delete=models.CASCADE)
+    author_comment = models.ForeignKey(User, related_name='bulletin_comments', on_delete=models.CASCADE)
