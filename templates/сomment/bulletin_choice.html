@@ -6,6 +6,10 @@
 
 <button> <a href="http://127.0.0.1:8000/bulletin/">Просмотр списка объявлений</a> </button>
 <button> <a href="http://127.0.0.1:8000/bulletin/create/?email={{ request.POST.email }}">Написать объявление</a> </button>
-<button> <a href="http://127.0.0.1:8000/bulletin/сomment/?email={{ request.POST.email }}">Написать сомментарий</a> </button>
+<button> <a href="http://127.0.0.1:8000/bulletin/comment/?email={{ request.POST.email }}">Написать сомментарий</a> </button>
+
+{% if request.user.is_superuser %}
+<button> <a href="http://127.0.0.1:8000/bulletin/news/">Написать новость</a> </button>
+{% endif %}
 
 {% endblock %}
