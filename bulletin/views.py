@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.views.generic import ListView, CreateView
 from .models import Bulletin
 from .forms import BulletinForm, CommentForm, NewsForm
@@ -29,10 +30,7 @@ def newsletter(request):
             # Перенаправляем на список объявлений
             return redirect('http://127.0.0.1:8000/bulletin/')
     else:
-        # Получаем значение email из параметров URL для
-        # получения id пользователя из User.
-        email = request.GET.get('email')
-        form = NewsForm(email=email)
+        form = NewsForm()
     # Перенаправляем на форму ввода сомментарий.
     return render(request, 'news/newsletter.html', {'form': form})
 

@@ -11,13 +11,13 @@ class NewsForm(forms.ModelForm):
                                                label='Категория',
                                                widget=forms.Select,
                                                initial=Category.objects.first(),
-                                               to_field_name='name_of_category',
+                                               to_field_name='id',
                                                )
     title_news = forms.CharField(label='Заголовок')
     text_news = forms.CharField(label='Текст', widget=forms.Textarea(attrs={'rows': 10, 'cols': 50}))
 
     class Meta:
-        model = Comment
+        model = News
         fields = [
             'category_news',
             'title_news',
