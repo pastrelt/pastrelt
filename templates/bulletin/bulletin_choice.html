@@ -8,5 +8,7 @@
 <button> <a href="http://127.0.0.1:8000/bulletin/create/?email={{ request.POST.email }}">Написать объявление</a> </button>
 <button> <a href="http://127.0.0.1:8000/bulletin/comment/?email={{ request.POST.email }}">Написать сомментарий</a> </button>
 <button> <a href="http://127.0.0.1:8000/bulletin/news/">Написать новость</a> </button>
+<button> <a href="http://127.0.0.1:8000/bulletin/page/?email={{ request.POST.email }}">Приватная страница</a> </button>
+
 
 {% endblock %}

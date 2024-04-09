@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Приватная страница</title>
+</head>
+<body>
+    <h1>Добро пожаловать, {{ user.username }}</h1>
+
+    <h2>Ваши комментарии:</h2>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.text }} - {% if comment.acceptance_flag %}Accepted{% else %}Pending{% endif %}</li>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                <button type="submit" name="action" value="accept">Accept</button>
+                <button type="submit" name="action" value="delete">Delete</button>
+            </form>
+        {% endfor %}
+    </ul>
+</body>
+</html>

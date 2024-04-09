@@ -13,7 +13,6 @@ def generate_confirmation_code():
 # Функция получения email пользователя и отпарвки ему случайного кода регистрации.
 def register(request):
     if request.method == 'POST':
-        print(1)
         email = request.POST.get('email')
         confirmation_code = generate_confirmation_code()
 
@@ -24,7 +23,6 @@ def register(request):
             Registration.objects.all().delete()
 
         Registration.objects.create(email=email, confirmation_code=confirmation_code)
-        print(3)
         send_mail(
             'Код подтверждения',
             f'Ваш код подтверждения: {confirmation_code}',
@@ -35,7 +33,6 @@ def register(request):
         # Ввод и подтверждение кода реистрации.
         return render(request, 'sign/confirm_registration.html',
                       {'email': email})
-    print(4)
     # Ввод и подтверждение введенной почты.
     return render(request, 'sign/register.html')
 
@@ -43,7 +40,6 @@ def register(request):
 # постоянную базу User. Очистка записи в таблице временного хранения данных.
 def confirm_registration(request):
     if request.method == 'POST':
-        print(2)
         email = request.POST.get('email')
         confirmation_code = request.POST.get('confirmation_code')
 
@@ -58,19 +54,15 @@ def confirm_registration(request):
 
                 user = User.objects.create_user(username=email, email=email)
                 register_now.delete()
-                print(5)
+
+            User.objects.get(email=email)
             # Страница авторизованного пользователя,
             # выбор кнопоки продолжения работы.
-            print(8)
             return render(request, 'bulletin/bulletin_choice.html')
         else:
-            print(6)
             # Предоставляем сайт уже зарегистрированным.
-            #return render(request, 'sign/registration_failure.html')
             return render(request, 'protect/index.html')
 
-
-        print(7)
     return redirect('register')
 
 

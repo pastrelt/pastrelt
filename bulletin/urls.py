@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданное нами представление
-from .views import BulletinList, create_bulletin, create_comment, newsletter
+from .views import BulletinList, create_bulletin, create_comment, newsletter, private_page
 
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path('comment/', create_comment, name='create_comment'),
 
     path('news/', newsletter, name='newsletter'),
+
+    path('page/', private_page, name='private_page'),
 ]
