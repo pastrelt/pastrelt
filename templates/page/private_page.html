@@ -5,18 +5,20 @@
     <title>Приватная страница</title>
 </head>
 <body>
-    <h1>Добро пожаловать, {{ user.username }}</h1>
+    <h1>Добро пожаловать, {{ request.POST.email }}</h1>
 
-    <h2>Ваши комментарии:</h2>
+    <h2>Комментарии по вашим объявлениям:</h2>
     <ul>
         {% for comment in comments %}
-            <li>{{ comment.text }} - {% if comment.acceptance_flag %}Accepted{% else %}Pending{% endif %}</li>
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                <button type="submit" name="action" value="accept">Accept</button>
-                <button type="submit" name="action" value="delete">Delete</button>
-            </form>
+            <li>{{ comment.text_comment }} - {% if comment.acceptance_flag %}Принято{% else %}Не принято{% endif %}</li>
+            {% if not comment.acceptance_flag %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <button type="submit" name="action" value="accept">Принять</button>
+                    <button type="submit" name="action" value="delete">Удалить</button>
+                </form>
+            {% endif %}
         {% endfor %}
     </ul>
 </body>

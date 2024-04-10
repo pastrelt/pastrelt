@@ -12,12 +12,14 @@ def private_page(request):
     email = request.GET.get('email', None)
     user = User.objects.get(email=email)
     user_id = user.id
-    print(1)
-    print(user_id)
-    comments = Comment.objects.filter(author_comment=user_id)
+
+    # Получаем все объявления автора и добавляем возможность сортировки по названию объявления
+    bulletins = Bulletin.objects.filter(author_bulletin=user_id).order_by('title_bulletin')
+
+    # Получаем все комментарии, относящиеся к объявлениям автора
+    comments = Comment.objects.filter(bulletin_key__in=bulletins)
 
     if request.method == 'POST':
-        print(2)
         comment_id = request.POST.get('comment_id')
         action = request.POST.get('action')
 
@@ -25,8 +27,18 @@ def private_page(request):
             comment = get_object_or_404(Comment, id=comment_id)
             comment.acceptance_flag = True
             comment.save()
-            # Отправить уведомление пользователю, оставившему отклик
-            # Здесь можно добавить логику отправки уведомления
+
+            # Отправляем уведомление автору комментария.
+            author_comment = comment.author_comment
+            bulletin_title = comment.bulletin_key.title_bulletin
+            message = f'Добрый день! Ваш комментарий по объявлению - {bulletin_title}, принят'
+            send_mail(
+                'Принятие комментария',
+                message,
+                'passtreltsov@yandex.ru',
+                [author_comment.email],
+                fail_silently=False,
+            )
 
         elif action == 'delete':
             comment = get_object_or_404(Comment, id=comment_id)
@@ -35,59 +47,10 @@ def private_page(request):
     context = {
         'user': user_id,
         'comments': comments,
+        'bulletins': bulletins,
     }
-    print(3)
-    return render(request, 'page/private_page.html', context)
-# def private_page(request, username):
-#     user = get_object_or_404(User, username=username)
-#     comments = Comment.objects.filter(author_comment=user)
-#
-#     if request.method == 'POST':
-#         comment_id = request.POST.get('comment_id')
-#         action = request.POST.get('action')
-#
-#         if action == 'accept':
-#             comment = get_object_or_404(Comment, id=comment_id)
-#             comment.acceptance_flag = True
-#             comment.save()
-#             # Отправить уведомление пользователю, оставившему отклик
-#             # Здесь можно добавить логику отправки уведомления
-#
-#         elif action == 'delete':
-#             comment = get_object_or_404(Comment, id=comment_id)
-#             comment.delete()
-#
-#     context = {
-#         'user': user,
-#         'comments': comments,
-#     }
-#     return render(request, 'private_page.html', context)
 
-# def private_page(request):
-#     # Пишем отклики, записываем и переходим на общий список объявлений.
-#     if request.method == 'POST':
-#         form = PrivatePageForm(request.POST)
-#         if form.is_valid():
-#             news_instance = form.save()
-#
-#             # Находим пользователей с объявлениями в заданной категории
-#             users_with_bulletins = User.objects.filter(bulletin__category_bulletin=news_instance.category_news)
-#
-#             # Отправляем письмо каждому пользователю
-#             for user in users_with_bulletins:
-#                 send_mail(
-#                     'Новости в категории {}'.format(news_instance.category_news),
-#                     news_instance.text_news,
-#                     'passtreltsov@yandex.ru',
-#                     [user.email],
-#                     fail_silently=False,
-#                 )
-#             # Перенаправляем на список объявлений
-#             return redirect('http://127.0.0.1:8000/bulletin/')
-#     else:
-#         form = PrivatePageForm()
-#     # Перенаправляем на форму ввода сомментарий.
-#     return render(request, 'news/newsletter.html', {'form': form})
+    return render(request, 'page/private_page.html', context)
 
 
 # Делаем рассылку новостей.
