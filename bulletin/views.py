@@ -48,9 +48,9 @@ def private_page(request):
             comment.delete()
 
         else:
-            bulletins_filter = request.POST.get('bulletins_filter')
-            comments = comments.filter(bulletin_key__in=bulletins_set,
-                                       bulletin_key__title_bulletin__icontains=bulletins_filter)
+            bulletin_id = request.POST.get('bulletins_filter')
+            if bulletin_id:
+                comments = comments.filter(bulletin_key=bulletin_id)
 
     context = {
         'user': user_id,

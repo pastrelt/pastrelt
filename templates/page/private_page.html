@@ -9,10 +9,15 @@
 
     <h2>Комментарии по вашим объявлениям:</h2>
     <ul>
-        <h3>Фильтр объявлениям:</h3>
+        <h3>Фильтр по названию объявления:</h3>
         <form method="post">
             {% csrf_token %}
-            <input type="text" name="bulletins_filter" placeholder="Введите название объявления">
+            <select name="bulletins_filter">
+                <option value="">Выберите объявление</option>
+                {% for bulletin in bulletins %}
+                    <option value="{{ bulletin.id }}">{{ bulletin.title_bulletin }}</option>
+                {% endfor %}
+            </select>
             <button type="submit">Применить фильтр</button>
         </form>
         {% for comment in comments %}
