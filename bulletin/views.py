@@ -14,10 +14,13 @@ def private_page(request):
     user_id = user.id
 
     # Получаем все объявления автора и добавляем возможность сортировки по названию объявления
-    bulletins = Bulletin.objects.filter(author_bulletin=user_id).order_by('title_bulletin')
+    bulletins_set = Bulletin.objects.filter(author_bulletin=user_id).order_by('title_bulletin')
+
+    # Создаем список имен объявлений
+    #bulletins = ', '.join(list(bulletins_set.values_list('title_bulletin', flat=True)))
 
     # Получаем все комментарии, относящиеся к объявлениям автора
-    comments = Comment.objects.filter(bulletin_key__in=bulletins)
+    comments = Comment.objects.filter(bulletin_key__in=bulletins_set)
 
     if request.method == 'POST':
         comment_id = request.POST.get('comment_id')
@@ -44,10 +47,15 @@ def private_page(request):
             comment = get_object_or_404(Comment, id=comment_id)
             comment.delete()
 
+        else:
+            bulletins_filter = request.POST.get('bulletins_filter')
+            comments = comments.filter(bulletin_key__in=bulletins_set,
+                                       bulletin_key__title_bulletin__icontains=bulletins_filter)
+
     context = {
         'user': user_id,
         'comments': comments,
-        'bulletins': bulletins,
+        'bulletins': bulletins_set,
     }
 
     return render(request, 'page/private_page.html', context)

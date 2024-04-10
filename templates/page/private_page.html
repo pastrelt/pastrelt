@@ -9,6 +9,12 @@
 
     <h2>Комментарии по вашим объявлениям:</h2>
     <ul>
+        <h3>Фильтр объявлениям:</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="bulletins_filter" placeholder="Введите название объявления">
+            <button type="submit">Применить фильтр</button>
+        </form>
         {% for comment in comments %}
             <li>{{ comment.text_comment }} - {% if comment.acceptance_flag %}Принято{% else %}Не принято{% endif %}</li>
             {% if not comment.acceptance_flag %}
